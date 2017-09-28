@@ -13,13 +13,11 @@ import com.zhang13690.captcha.Captcha;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = "/getCapt")
-public class CaptchaDemo extends HttpServlet {
+@WebServlet(urlPatterns = "/captchaServlet")
+public class CaptchaServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // 创建验证码对象
@@ -28,7 +26,9 @@ public class CaptchaDemo extends HttpServlet {
         String code = captcha.getCaptcha();
         // 可将验证码保存在session中
         req.getSession().setAttribute("code", code);
-        // 调用提供的write方法，将验证码图片以流的形式输出
+        // 调用提供的write方法，将验证码图片以流的形式输出。
+        // 先设置响应头，再调用captcha的write()方法将图片输出
+        resp.setContentType(getServletContext().getMimeType(".jpeg"));
         captcha.write(resp.getOutputStream());
     }
 }
